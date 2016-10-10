@@ -1,6 +1,6 @@
 {
   "name": "btc-models",
-  "version": "0.4.2",
+  "version": "1.0.0",
   "description": "Shared models and validation for the Bicycle Touring Companion",
   "scripts": {
     "prepublish": "npm run build",
@@ -10,7 +10,7 @@
     "doc": "docco src/model/*.js",
     "prebuild": "npm run clean",
     "build": "babel src -d lib --copy-files",
-    "clean": "rm -r lib/",
+    "clean": "touch lib && rm -r lib",
     "//preunit": "babel test -d .test --copy-files",
     "unit": "mocha \"test/**/*.js\" --require \"./shim\" --compilers js:babel-core/register",
     "test": "nyc npm run unit",
@@ -25,14 +25,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bikelomatic-complexity/btc-models.git"
+    "url": "git+https://github.com/tour-de-force/btc-models.git"
   },
   "author": "Steven Kroh",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/bikelomatic-complexity/btc-models/issues"
+    "url": "https://github.com/tour-de-force/btc-models/issues"
   },
-  "homepage": "https://github.com/bikelomatic-complexity/btc-models#readme",
+  "homepage": "https://github.com/tour-de-force/btc-models#readme",
   "main": "lib/index.js",
   "dependencies": {
     "ajv": "^3.7.1",
