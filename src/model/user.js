@@ -126,7 +126,7 @@ export const UserRefCollection = CouchCollection.extend( {
 // Use this model when you want to create new users. This model validates
 // passwords in addition to the other information.
 export const User = UserRef.extend( {
-  schema: mergeSchemas( {}, UserRef.prototype.schema, {
+  schema: mergeSchemas( UserRef.prototype.schema, {
     properties: {
       password: {
         type: 'string',

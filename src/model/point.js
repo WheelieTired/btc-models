@@ -46,7 +46,7 @@ var Promise = require('polyfill-promise');
 // The point model uri is composed of four parts:
 //  1. The string 'point/'`
 //  2. The type of point, either 'service' or 'alert'
-//  3. The normalized name of the point
+//  3. The normalized (original) name of the point
 //  4. The point's geohash
 const pointId = docuri.route( 'point/:type/:name/:geohash' );
 
@@ -74,23 +74,27 @@ export const Point = CouchModel.extend( {
   // Fill in `_id` from the components of the point model uri.
   // Pull values from `attributes` if name and location are undefined.
   specify: function( type, name, location ) {
-    if ( name ) {
-      const [lat, lng] = location;
-      const _id = pointId( {
-        type: type,
-        name: normalize( name ),
-        geohash: ngeohash.encode( lat, lng )
-      } );
-      this.set( { _id, type, name, location } );
-    } else {
-      const {name, location} = this.attributes;
-      const [lat, lng] = location;
-      const _id = pointId( {
-        type: type,
-        name: normalize( name ),
-        geohash: ngeohash.encode( lat, lng )
-      } );
-      this.set( { _id } );
+    // Only set the ID attribute here if it wasn't already set.
+    // The original ID stays the ID for the lifetime of the point.
+    if (typeof this.attributes._id === "undefined") {
+      if ( name ) {
+        const [lat, lng] = location;
+        const _id = pointId( {
+          type: type,
+          name: normalize( name ),
+          geohash: ngeohash.encode( lat, lng )
+        } );
+        this.set( { _id, type, name, location } );
+      } else {
+        const {name, location} = this.attributes;
+        const [lat, lng] = location;
+        const _id = pointId( {
+          type: type,
+          name: normalize( name ),
+          geohash: ngeohash.encode( lat, lng )
+        } );
+        this.set( { _id } );
+      }
     }
   },
 
