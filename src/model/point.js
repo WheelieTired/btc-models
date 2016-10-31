@@ -55,11 +55,11 @@ export const Point = CouchModel.extend( {
 
   initialize: function( attributes, options ) {
     CouchModel.prototype.initialize.apply( this, arguments );
-
+  
     const date = new Date().toISOString();
     this.set( {
       created_at: date,
-      updated_at: date
+      updated_at: date,
     } );
 
     this.coverBlob = false;
@@ -107,7 +107,8 @@ export const Point = CouchModel.extend( {
 
   defaults: function() {
     return {
-      flag: false
+      flag: false,
+      updated_by: 'unknown'
     };
   },
 
@@ -137,6 +138,9 @@ export const Point = CouchModel.extend( {
         type: 'string',
         format: 'date-time'
       },
+      updated_by: {
+        type: 'string',
+      },
       description: {
         type: 'string'
       },
@@ -150,6 +154,7 @@ export const Point = CouchModel.extend( {
       'type',
       'created_at',
       'updated_at',
+      'updated_by',	/* Added: To attach points to users via their _id */
       'flag'
     ]
   },

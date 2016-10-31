@@ -216,6 +216,17 @@ export const Schedule = Model.extend( {
     const hours = find( season, { day: today() } );
 
     return hours ? hours.closes : null;
+  },
+
+  // Returns a boolean based on if any days have hours.
+  hasAnyHoursAdded() {
+    const season = this.get( 'schedule' ).default;
+
+    if (season.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 } );
 
