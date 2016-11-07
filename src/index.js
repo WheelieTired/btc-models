@@ -3,23 +3,32 @@ export { serviceTypes, alertTypes, display } from './model/point';
 
 export { Schedule, days, nextDay, timezones } from './model/hours';
 
-export { User, UserCollection, UserRef, UserRefCollection, Login } from './model/user';
-export { Point, Service, Alert, PointCollection, Comment, CommentCollection } from './model/point';
+export { User, UserCollection, UserRef, UserRefCollection, Login, Forgot, Reset } from './model/user';
+export { Point, Service, Alert, PointCollection } from './model/point';
+export { Comment, CommentCollection } from './model/comment';
 
-import { Point, Service, Alert, PointCollection, Comment, CommentCollection } from './model/point';
+import { Point, Service, Alert, PointCollection } from './model/point';
+import { Comment, CommentCollection } from './model/comment';
 
 /*esfmt-ignore-start*/
-export const models = [
+export const pointModels = [
   Point,
   Service,
   Alert,
-  PointCollection,
+  PointCollection
+];
+
+export const commentModels = [
   Comment,
   CommentCollection
 ];
 /*esfmt-ignore-end*/
 
 import { connectMut } from './connect';
-export default function connectModels( database ) {
-  connectMut( database, models );
+export function connectPointModels( database ) {
+  connectMut( database, pointModels );
+}
+
+export function connectCommentModels( database ) {
+  connectMut( database, commentModels );
 }

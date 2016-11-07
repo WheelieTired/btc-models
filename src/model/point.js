@@ -48,7 +48,7 @@ var Promise = require('polyfill-promise');
 //  2. The type of point, either 'service' or 'alert'
 //  3. The normalized (original) name of the point
 //  4. The point's geohash
-const pointId = docuri.route( 'point/:type/:name/:geohash' );
+export const pointId = docuri.route( 'point/:type/:name/:geohash' );
 
 export const Point = CouchModel.extend( {
   idAttribute: '_id',
@@ -221,13 +221,14 @@ export const Point = CouchModel.extend( {
   uri: pointId,
 
   for: id => {
-    const {type} = pointId( id );
+    const pointIdComponents = pointId( id );
+    const type = pointIdComponents.type;
     if ( type === 'service' ) {
       return new Service( { _id: id } );
     } else if ( type === 'alert' ) {
       return new Alert( { _id: id } );
     } else {
-      throw 'A point must either be a service or alert';
+      throw 'A point must be a service or alert';
     }
   }
 } );
@@ -367,9 +368,6 @@ mixinValidation( Alert );
 // A heterogeneous collection of services and alerts. PouchDB is able to fetch
 // this collection by looking for all keys starting with 'point/'.
 //
-// This also has the effect of fetching comments for points. TODO: handle
-// `Comment` in the model function.
-//
 // A connected PointCollection must be able to generate connected Alerts or
 // Services on demands. Therefore, if PointCollection is connected, connect
 // models before returning them.
@@ -403,12 +401,13 @@ export const PointCollection = CouchCollection.extend( {
   },
 
   model: function( attributes, options ) {
-    const parts = pointId( attributes._id );
+    const pointIdComponents = pointId( attributes._id );
+    const type = pointIdComponents.type;
     const map = {
       'service': options.collection.service,
       'alert': options.collection.alert
     };
-    const constructor = map[ parts.type ];
+    const constructor = map[ type ];
     if ( constructor ) {
       const instance = new constructor( attributes, options );
 
@@ -419,7 +418,7 @@ export const PointCollection = CouchCollection.extend( {
 
       return instance;
     } else {
-      throw 'A point must be either a service or alert';
+      throw 'A point must be a service or alert';
     }
   },
 
@@ -449,98 +448,3 @@ export function display( type ) {
     return null;
   }
 }
-
-// # Comment Model
-// Information about alerts and services encountered by cyclists is likely
-// to change with the seasons or other reasons. Cyclists planning the next leg
-// of a tour should be able to read the experiences of cyclists ahead of them.
-//
-// A comment must have both a rating and the text of the comment. Comments are
-// limited to 140 characters to ensure they do not devolve into general alert
-// or service information that should really be in the description. We really
-// want users of the Bicycle Touring Companion to provide comments verifying
-// info about points, or letting other cyclists know about changes in the
-// service or alert.
-
-// ## Comment Model Uri
-// Comments are stored in CouchDB in the same database as points. The comment
-// model uri is composed of three parts:
-//  1. The entire id of the related point
-//  2. The string 'comment/'
-//  3. A time based UUID to uniquely identify comments
-//
-// We don't use `docuri` for the comment model uris because we don't have to
-// parse them.
-
-const COMMENT_MAX_LENGTH = 140;
-export const Comment = CouchModel.extend( {
-  idAttribute: '_id',
-
-  // ## Constructor
-  // Generate `_id`. `pointId` must be specified in options.
-  constructor: function( attributes, options ) {
-    options = options || {};
-    if ( !attributes.uuid ) {
-      attributes.uuid = uuid.v1();
-    }
-    if ( !attributes._id && options.pointId ) {
-      attributes._id = options.pointId + '/comment/' + attributes.uuid;
-    }
-    CouchModel.apply( this, arguments );
-  },
-
-  schema: {
-    type: 'object',
-    additionalProperties: false,
-    properties: {
-      text: {
-        'type': 'string',
-        'maxLength': COMMENT_MAX_LENGTH
-      },
-      rating: {
-        type: 'integer',
-        minimum: 1,
-        maximum: 5
-      },
-      uuid: {
-        type: 'string'
-      }
-    },
-    required: [
-      'text',
-      'rating',
-      'uuid'
-    ]
-  }
-}, {
-  MAX_LENGTH: COMMENT_MAX_LENGTH
-} );
-
-mixinValidation( Comment );
-
-// # Comment Collection
-// Fetch only comments associated with a given point.
-export const CommentCollection = CouchCollection.extend( {
-  initialize: function( models, options ) {
-    CouchCollection.prototype.initialize.apply( this, arguments );
-    const pointId = this.pointId = options.pointId;
-
-    const connect = this.connect;
-    const database = this.database;
-    this.comment = connect ? connect( database, Comment ) : Comment;
-
-    this.pouch = {
-      options: {
-        allDocs: {
-          ...keysBetween( pointId + '/comment' ),
-          include_docs: true
-        }
-      }
-    };
-  },
-
-  model: function( attributes, options ) {
-    const {comment, pointId} = options.collection;
-    return new comment( attributes, { pointId, ...options } );
-  }
-} );
