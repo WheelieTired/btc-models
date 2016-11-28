@@ -50,6 +50,9 @@ var Promise = require('polyfill-promise');
 //  4. The point's geohash
 export const pointId = docuri.route( 'point/:type/:name/:geohash' );
 
+const COMMENT_MIN_LENGTH = 1;
+const COMMENT_MAX_LENGTH = 140;
+
 export const Point = CouchModel.extend( {
   idAttribute: '_id',
 
@@ -108,7 +111,8 @@ export const Point = CouchModel.extend( {
   defaults: function() {
     return {
       flagged_by: [],
-      updated_by: 'unknown'
+      updated_by: 'unknown',
+      comments: []
     };
   },
 
@@ -149,6 +153,42 @@ export const Point = CouchModel.extend( {
       },
       description: {
         type: 'string'
+      },
+      comments: {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            user: {
+              type: 'string'
+            },
+            date: {
+              type: 'string',
+              format: 'date-time'
+            },
+            text: {
+              'type': 'string',
+              'minLength': COMMENT_MIN_LENGTH,
+              'maxLength': COMMENT_MAX_LENGTH
+            },
+            rating: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 5
+            },
+            uuid: {
+              type: 'string'
+            }
+          },
+          required: [
+            'user',
+            'date',
+            'text',
+            'rating',
+            'uuid'
+          ]
+        }
       }
     },
     required: [
@@ -158,7 +198,8 @@ export const Point = CouchModel.extend( {
       'created_at',
       'updated_at',
       'updated_by',	/* Added: To attach points to users via their _id */
-      'flagged_by'
+      'flagged_by',
+      'comments'
     ]
   },
 
