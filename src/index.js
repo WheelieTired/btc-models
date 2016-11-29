@@ -5,7 +5,6 @@ export { Schedule, days, nextDay, timezones } from './model/hours';
 
 export { User, UserCollection, UserRef, UserRefCollection, Login, Forgot, Reset } from './model/user';
 export { Point, Service, Alert, PointCollection } from './model/point';
-export { Comment, CommentCollection } from './model/comment';
 
 import { Point, Service, Alert, PointCollection } from './model/point';
 
