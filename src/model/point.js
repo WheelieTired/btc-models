@@ -112,7 +112,7 @@ export const Point = CouchModel.extend( {
     return {
       flagged_by: [],
       updated_by: 'unknown',
-      comments: []
+      comments: [],
     };
   },
 
@@ -148,7 +148,15 @@ export const Point = CouchModel.extend( {
       flagged_by:{
         type: 'array',
          items: {
-          type: 'string'
+          type: 'object',
+          properties: {
+            user: {type: 'string'},
+            reason: {type: 'string', minLength: COMMENT_MIN_LENGTH, maxLength: COMMENT_MAX_LENGTH}
+          },
+            required: [
+            'user',
+            'reason'
+          ]
         }
       },
       description: {
@@ -168,7 +176,7 @@ export const Point = CouchModel.extend( {
               format: 'date-time'
             },
             text: {
-              'type': 'string',
+              type: 'string',
               'minLength': COMMENT_MIN_LENGTH,
               'maxLength': COMMENT_MAX_LENGTH
             },
