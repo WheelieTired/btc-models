@@ -113,6 +113,7 @@ export const Point = CouchModel.extend( {
       flagged_by: [],
       updated_by: 'unknown',
       comments: [],
+      is_hidden: false
     };
   },
 
@@ -158,6 +159,9 @@ export const Point = CouchModel.extend( {
             'reason'
           ]
         }
+      },
+      is_hidden:{
+        type: 'boolean'
       },
       description: {
         type: 'string'
@@ -207,6 +211,7 @@ export const Point = CouchModel.extend( {
       'updated_at',
       'updated_by',	/* Added: To attach points to users via their _id */
       'flagged_by',
+      'is_hidden',
       'comments'
     ]
   },
