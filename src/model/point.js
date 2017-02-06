@@ -112,7 +112,8 @@ export const Point = CouchModel.extend( {
     return {
       flagged_by: [],
       updated_by: 'unknown',
-      comments: []
+      comments: [],
+      is_hidden: false
     };
   },
 
@@ -148,8 +149,19 @@ export const Point = CouchModel.extend( {
       flagged_by:{
         type: 'array',
          items: {
-          type: 'string'
+          type: 'object',
+          properties: {
+            user: {type: 'string'},
+            reason: {type: 'string', minLength: COMMENT_MIN_LENGTH, maxLength: COMMENT_MAX_LENGTH}
+          },
+            required: [
+            'user',
+            'reason'
+          ]
         }
+      },
+      is_hidden:{
+        type: 'boolean'
       },
       description: {
         type: 'string'
@@ -168,7 +180,7 @@ export const Point = CouchModel.extend( {
               format: 'date-time'
             },
             text: {
-              'type': 'string',
+              type: 'string',
               'minLength': COMMENT_MIN_LENGTH,
               'maxLength': COMMENT_MAX_LENGTH
             },
@@ -199,6 +211,7 @@ export const Point = CouchModel.extend( {
       'updated_at',
       'updated_by',	/* Added: To attach points to users via their _id */
       'flagged_by',
+      'is_hidden',
       'comments'
     ]
   },
