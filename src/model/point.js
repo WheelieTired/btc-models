@@ -414,7 +414,11 @@ export const Alert = Point.extend( {
     properties: {
       type: {
         enum: keys( alertTypes )
-      }
+      },
+       expiration_date: {
+        type: 'string',
+        format: 'date-time'
+      },
     }
   } )
 } );
