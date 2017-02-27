@@ -21,7 +21,6 @@ import { mixinValidation, mergeSchemas } from './validation-mixin';
 import { CouchModel, CouchCollection, keysBetween } from './base';
 
 import { keys, fromPairs, includes, assign } from 'lodash';
-import { createObjectURL } from 'blob-util';
 
 import docuri from 'docuri';
 import ngeohash from 'ngeohash';
@@ -65,8 +64,6 @@ export const Point = CouchModel.extend( {
       updated_at: date,
     } );
 
-    this.coverBlob = false;
-    this.coverUrl = false;
   },
 
   update: function() {
@@ -100,13 +97,6 @@ export const Point = CouchModel.extend( {
       }
     }
   },
-
-  // ## Safeguard for Points
-  // Points have image attachments, so we should let backbone pouch handle
-  // those and we should not validate the _attachments key
-  safeguard: [
-    '_attachments'
-  ],
 
   defaults: function() {
     return {
@@ -218,61 +208,13 @@ export const Point = CouchModel.extend( {
 
   clear: function() {
     CouchModel.prototype.clear.apply( this, arguments );
-    this.coverUrl = false;
-  },
-
-  // ## Fetch
-  // When fetching a point, should it have a cover attachment, extend the
-  // promise to fetch the attachment and set `this.coverUrl`.
-  fetch: function() {
-    return CouchModel.prototype.fetch.apply( this, arguments ).then( res => {
-      return this.getCover( res );
-    } );
-  },
-
-  // # Get Cover
-  // Should a point (already fetched) have a cover attachment, get the
-  // attachment's data and store an object url for it in `this.coverUrl`
-  //
-  // As a utility to client functions, resolve the returned promise to the
-  // single argument passed to `getCover`.
-  getCover: function( ret ) {
-    return Promise.resolve().then( ( ) => {
-      const hasCover = includes( this.attachments(), 'cover.png' );
-      if ( browser && hasCover ) {
-        return this.attachment( 'cover.png' );
-      } else {
-        return;
-      }
-    } ).then( blob => {
-      if ( blob ) {
-        this.coverBlob = blob;
-        this.coverUrl = createObjectURL( blob );
-      }
-    } ).then( ( ) => {
-      return ret;
-    } );
-  },
-
-  // ## Set Cover
-  // If the user already has a cover blob and they want to use it with the
-  // model before attach() can finish storing it to PouchDB, they can use
-  // this method to manually insert it.
-  //
-  // The associated object url for the blob will then be available to other
-  // functions like store().
-  setCover: function( blob ) {
-    this.coverBlob = blob;
-    if ( browser ) {
-      this.coverUrl = createObjectURL( blob );
-    }
   },
 
   // ## Get Redux Representation
   // Return a nested object/arary representation of the model suitable for
   // use with redux.
   store: function() {
-    return { ...this.toJSON(), coverUrl: this.coverUrl };
+    return { ...this.toJSON() };
   }
 }, {
   uri: pointId,
@@ -481,13 +423,6 @@ export const PointCollection = CouchCollection.extend( {
     } else {
       throw 'A point must be a service or alert';
     }
-  },
-
-  // ## Fetch Cover Images for all Points
-  // Returns a promise that resolves when all points in the array have
-  // their cover images available.
-  getCovers: function() {
-    return Promise.all( this.models.map( point => point.getCover() ) );
   },
 
   // ## Get Redux Representation
