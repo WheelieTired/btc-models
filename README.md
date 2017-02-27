@@ -22,3 +22,4 @@ That's it! To find more info check out the npm-link documents https://docs.npmjs
 1. Make sure NODE_ENV is set to `test`
 2. run `npm run build`
 3. run `npm run test`
+4. If you'd like a coverage report, run 'npm run coverage' and check the coverage folder that appears in your project's root directory for lcov-report/index.html. Also, 'npm run test' will also provide a brief coverage report via it's CLI output.

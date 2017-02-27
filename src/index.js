@@ -6,6 +6,8 @@ export { Schedule, days, nextDay, timezones } from './model/hours';
 export { User, UserCollection, UserRef, UserRefCollection, Login, Forgot, Reset } from './model/user';
 export { Point, Service, Alert, PointCollection } from './model/point';
 
+export { Photo } from './model/photo';
+
 import { Point, Service, Alert, PointCollection } from './model/point';
 
 /*esfmt-ignore-start*/
