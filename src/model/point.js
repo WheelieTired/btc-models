@@ -25,7 +25,7 @@ import { keys, fromPairs, includes, assign } from 'lodash';
 import docuri from 'docuri';
 import ngeohash from 'ngeohash';
 import normalize from 'to-id';
-import uuid from 'node-uuid';
+import uuid from 'uuid';
 
 const browser = ( typeof window !== 'undefined' );
 
