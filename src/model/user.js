@@ -20,10 +20,12 @@
 import { CouchModel, CouchCollection } from './base';
 import { mixinValidation, mergeSchemas } from './validation-mixin';
 
+import uuid from 'uuid';
+
 // Base schema for both User and UserRef.
 //
 // This schema includes the fields we want to store along with a user document,
-// including: email, first name, last name, username <NOW REMOVED as of Oct 2nd, 2016>,
+// including: uuid, email, first name, last name, username <NOW REMOVED as of Oct 2nd, 2016>,
 // verification (the token),
 // and verified (a boolean).
 //
@@ -34,6 +36,9 @@ const schema = {
   type: 'object',
   additionalProperties: false,
   properties: {
+    uuid: {
+      type: 'string'
+    },
     email: {
       type: 'string',
       format: 'email'
@@ -57,6 +62,7 @@ const schema = {
     }
   },
   required: [
+    'uuid',
     'email',
     'first',
     'last',
@@ -66,12 +72,12 @@ const schema = {
 };
 
 // # User Reference
-// We uniquely reference Users by their emails. When models are serialized into
+// We uniquely reference Users by their uuids. When models are serialized into
 // CouchDB docs, the `_id` and `name` keys will be set. Use a UserRef When
 // you are retriving user infromation from the server (it will not include
 // the password).
 export const UserRef = CouchModel.extend( {
-  idAttribute: 'email',
+  idAttribute: 'uuid',
 
   safeguard: [
     'name',
@@ -98,8 +104,8 @@ export const UserRef = CouchModel.extend( {
   //  - type must be 'user'.
   toJSON: function( options ) {
     return Object.assign( {}, this.attributes, {
-      _id: `org.couchdb.user:${this.attributes.email}`,
-      name: this.attributes.email,
+      _id: `org.couchdb.user:${this.attributes.uuid}`,
+      name: this.attributes.uuid,
       type: 'user'
     } );
   }
