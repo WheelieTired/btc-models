@@ -228,6 +228,8 @@ export const Point = CouchModel.extend( {
       return new Alert( { _id: id } );
     } else {
       throw 'A point must be a service or alert';
+	  //TODO: a malformed point shouldn't break the app's functionality
+	  // the malformed point should be skipped and normal process continues
     }
   }
 } );
@@ -422,6 +424,8 @@ export const PointCollection = CouchCollection.extend( {
       return instance;
     } else {
       throw 'A point must be a service or alert';
+	  //TODO: a malformed point shouldn't break the app's functionality
+	  // the malformed point should be skipped and normal process continues
     }
   },
 
