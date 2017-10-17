@@ -423,10 +423,12 @@ export const PointCollection = CouchCollection.extend( {
 
       return instance;
     } else {
-      throw 'A point must be a service or alert';
-	  //TODO: a malformed point shouldn't break the app's functionality
-	  // the malformed point should be skipped and normal process continues
+      throw new MalformedPointException();
     }
+	
+	catch(e){
+		console.log(e.message, e.name);
+	}
   },
 
   // ## Get Redux Representation
@@ -447,4 +449,9 @@ export function display( type ) {
   } else {
     return null;
   }
+}
+
+function MalformedPointException(){
+	this.message = "Encountered Malformed Point";
+	this.name = "Malformed Point Exception";
 }
