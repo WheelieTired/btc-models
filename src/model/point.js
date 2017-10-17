@@ -57,7 +57,7 @@ export const Point = CouchModel.extend( {
 
   initialize: function( attributes, options ) {
     CouchModel.prototype.initialize.apply( this, arguments );
-  
+
     const date = new Date().toISOString();
     this.set( {
       created_at: date,
@@ -413,6 +413,7 @@ export const PointCollection = CouchCollection.extend( {
       'alert': options.collection.alert
     };
     const constructor = map[ type ];
+    try{
     if ( constructor ) {
       const instance = new constructor( attributes, options );
 
@@ -425,9 +426,9 @@ export const PointCollection = CouchCollection.extend( {
     } else {
       throw new MalformedPointException();
     }
-	
+	}
 	catch(e){
-		console.log(e.message, e.name);
+		console.error(e.message);
 	}
   },
 
@@ -452,6 +453,6 @@ export function display( type ) {
 }
 
 function MalformedPointException(){
-	this.message = "Encountered Malformed Point";
+	this.message = "Error: A malformed point was found and skipped.";
 	this.name = "Malformed Point Exception";
 }
