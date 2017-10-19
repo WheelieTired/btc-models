@@ -57,7 +57,7 @@ export const Point = CouchModel.extend( {
 
   initialize: function( attributes, options ) {
     CouchModel.prototype.initialize.apply( this, arguments );
-  
+
     const date = new Date().toISOString();
     this.set( {
       created_at: date,
@@ -228,6 +228,8 @@ export const Point = CouchModel.extend( {
       return new Alert( { _id: id } );
     } else {
       throw 'A point must be a service or alert';
+	  //TODO: a malformed point shouldn't break the app's functionality
+	  // the malformed point should be skipped and normal process continues
     }
   }
 } );
@@ -411,6 +413,7 @@ export const PointCollection = CouchCollection.extend( {
       'alert': options.collection.alert
     };
     const constructor = map[ type ];
+    try{
     if ( constructor ) {
       const instance = new constructor( attributes, options );
 
@@ -421,8 +424,12 @@ export const PointCollection = CouchCollection.extend( {
 
       return instance;
     } else {
-      throw 'A point must be a service or alert';
+      throw new MalformedPointException();
     }
+	}
+	catch(e){
+		console.error(e.message);
+	}
   },
 
   // ## Get Redux Representation
@@ -443,4 +450,9 @@ export function display( type ) {
   } else {
     return null;
   }
+}
+
+function MalformedPointException(){
+	this.message = "Error: A malformed point was found and skipped.";
+	this.name = "Malformed Point Exception";
 }
