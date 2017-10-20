@@ -1,6 +1,8 @@
 language: node_js
 node_js:
 - '4.2'
+notifications:
+  slack: adventure-cycling:tk7JVJnQzyDeWadDzfdxcZYT
 before_script:
 - npm run format
 - npm run lint
