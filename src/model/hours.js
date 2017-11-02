@@ -222,7 +222,7 @@ export const Schedule = Model.extend( {
   hasAnyHoursAdded() {
     const season = this.get( 'schedule' ).default;
 
-    if (season.length > 0) {
+    if ( season.length > 0 ) {
       return true;
     } else {
       return false;

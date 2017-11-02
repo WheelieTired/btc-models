@@ -27,7 +27,7 @@ export const Photo = CouchModel.extend( {
 
   initialize: function( attributes, options ) {
     CouchModel.prototype.initialize.apply( this, arguments );
-  
+
     const date = new Date().toISOString();
     this.set( {
       created_at: date,

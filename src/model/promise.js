@@ -1,7 +1,7 @@
 import { Model, Collection } from 'backbone';
 import { assign } from 'lodash';
 
-var Promise = require('polyfill-promise');
+var Promise = require( 'polyfill-promise' );
 
 // # Backbone Promises
 // This file provides Model and Collection base classes that override

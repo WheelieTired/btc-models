@@ -1,4 +1,4 @@
-﻿/* btc-app-server -- Server for the Bicycle Touring Companion
+/* btc-app-server -- Server for the Bicycle Touring Companion
  * Copyright © 2016 Adventure Cycling Association
  *
  * This file is part of btc-app-server.

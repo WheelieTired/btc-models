@@ -217,7 +217,7 @@ describe( 'Point models and collections', function() {
       it( 'should create and save points to PouchDB', function( done ) {
         const ConnectedPointCollection = connect( this.pouch, PointCollection );
         const points = new ConnectedPointCollection();
-        points.once( 'add', ( ) => {
+        points.once( 'add', () => {
           points.reset();
           points.fetch().then( res => {
             expect( res.collection.models ).to.have.lengthOf( 1 );

@@ -29,7 +29,7 @@ import uuid from 'uuid';
 
 const browser = ( typeof window !== 'undefined' );
 
-var Promise = require('polyfill-promise');
+var Promise = require( 'polyfill-promise' );
 
 // # Point Model
 // The point represents a location on the map with associated metadata, geodata,
@@ -76,7 +76,7 @@ export const Point = CouchModel.extend( {
   specify: function( type, name, location ) {
     // Only set the ID attribute here if it wasn't already set.
     // The original ID stays the ID for the lifetime of the point.
-    if (typeof this.attributes._id === "undefined") {
+    if ( typeof this.attributes._id === "undefined" ) {
       if ( name ) {
         const [lat, lng] = location;
         const _id = pointId( {
@@ -136,21 +136,21 @@ export const Point = CouchModel.extend( {
       updated_by: {
         type: 'string',
       },
-      flagged_by:{
+      flagged_by: {
         type: 'array',
-         items: {
+        items: {
           type: 'object',
           properties: {
-            user: {type: 'string'},
-            reason: {type: 'string', minLength: COMMENT_MIN_LENGTH, maxLength: COMMENT_MAX_LENGTH}
+            user: { type: 'string' },
+            reason: { type: 'string', minLength: COMMENT_MIN_LENGTH, maxLength: COMMENT_MAX_LENGTH }
           },
-            required: [
+          required: [
             'user',
             'reason'
           ]
         }
       },
-      is_hidden:{
+      is_hidden: {
         type: 'boolean'
       },
       description: {
@@ -199,7 +199,7 @@ export const Point = CouchModel.extend( {
       'type',
       'created_at',
       'updated_at',
-      'updated_by',	/* Added: To attach points to users via their _id */
+      'updated_by', /* Added: To attach points to users via their _id */
       'flagged_by',
       'is_hidden',
       'comments'
@@ -228,8 +228,8 @@ export const Point = CouchModel.extend( {
       return new Alert( { _id: id } );
     } else {
       throw 'A point must be a service or alert';
-	  //TODO: a malformed point shouldn't break the app's functionality
-	  // the malformed point should be skipped and normal process continues
+    //TODO: a malformed point shouldn't break the app's functionality
+    // the malformed point should be skipped and normal process continues
     }
   }
 } );
@@ -359,7 +359,7 @@ export const Alert = Point.extend( {
       type: {
         enum: keys( alertTypes )
       },
-       expiration_date: {
+      expiration_date: {
         type: 'string',
         format: 'date-time'
       },
@@ -413,23 +413,22 @@ export const PointCollection = CouchCollection.extend( {
       'alert': options.collection.alert
     };
     const constructor = map[ type ];
-    try{
-    if ( constructor ) {
-      const instance = new constructor( attributes, options );
+    try {
+      if ( constructor ) {
+        const instance = new constructor( attributes, options );
 
-      if ( options.deindex && instance.has( 'index' ) ) {
-        instance.index = instance.get( 'index' );
-        instance.unset( 'index ' );
+        if ( options.deindex && instance.has( 'index' ) ) {
+          instance.index = instance.get( 'index' );
+          instance.unset( 'index ' );
+        }
+
+        return instance;
+      } else {
+        throw new MalformedPointException();
       }
-
-      return instance;
-    } else {
-      throw new MalformedPointException();
+    } catch ( e ) {
+      console.error( e.message );
     }
-	}
-	catch(e){
-		console.error(e.message);
-	}
   },
 
   // ## Get Redux Representation
@@ -452,7 +451,7 @@ export function display( type ) {
   }
 }
 
-function MalformedPointException(){
-	this.message = "Error: A malformed point was found and skipped.";
-	this.name = "Malformed Point Exception";
+function MalformedPointException() {
+  this.message = "Error: A malformed point was found and skipped.";
+  this.name = "Malformed Point Exception";
 }
